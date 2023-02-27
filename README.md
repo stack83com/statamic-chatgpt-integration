@@ -1,1 +1,1 @@
-# statamic-chatgpt-integration
+# Statamic ChatGPT Integration
