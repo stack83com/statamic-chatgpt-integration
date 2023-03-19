@@ -1,6 +1,6 @@
-# Openai
+# Statamic ChatGPT Integration
 
-> Openai is a Statamic addon that does something pretty neat.
+> Statamic ChatGPT Integration is a Statamic addon that does something pretty neat.
 
 ## Features
 
