@@ -7,7 +7,7 @@
     },
     "extra": {
         "statamic": {
-            "name": "Statamic ChatGPT",
+            "name": "Statamic ChatGPT Integration",
             "description": "Where ChatGPT meets Statamic"
         },
         "laravel": {
