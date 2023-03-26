@@ -1,0 +1,26 @@
+{
+    "name": "stack83/statamic-chatgpt",
+    "autoload": {
+        "psr-4": {
+            "Stack83\\StatamicChatGPT\\": "src"
+        }
+    },
+    "extra": {
+        "statamic": {
+            "name": "Statamic ChatGPT",
+            "description": "Your Statamic AI assistant"
+        },
+        "laravel": {
+            "providers": [
+                "Stack83\\StatamicChatGPT\\ServiceProvider"
+            ]
+        }
+    },
+    "require": {
+        "openai-php/client": "^0.3.5"
+    }
+    ,
+    "require-dev": {
+        "roave/security-advisories": "dev-latest"
+    }
+}
