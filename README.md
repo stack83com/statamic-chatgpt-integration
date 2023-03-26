@@ -15,7 +15,7 @@ This addon does:
 You can search for this addon in the `Tools > Addons` section of the Statamic control panel and click **install**, or run the following command from your project root:
 
 ``` bash
-composer require stack83/statamic-chatgpt
+composer require stack83com/statamic-chatgpt-integration
 ```
 
 ## How to Use

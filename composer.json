@@ -1,5 +1,5 @@
 {
-    "name": "stack83/statamic-chatgpt",
+    "name": "stack83com/statamic-chatgpt-integration",
     "autoload": {
         "psr-4": {
             "Stack83\\StatamicChatGPT\\": "src"
@@ -8,7 +8,7 @@
     "extra": {
         "statamic": {
             "name": "Statamic ChatGPT",
-            "description": "Your Statamic AI assistant"
+            "description": "Where ChatGPT meets Statamic"
         },
         "laravel": {
             "providers": [
