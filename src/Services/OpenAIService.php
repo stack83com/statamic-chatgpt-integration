@@ -13,7 +13,7 @@ final class OpenAIService implements ChatService
 
     public function __construct()
     {
-        $key = config('openai.api_key');
+        $key = config('statamic-chatgpt-integration.api_key');
         $this->client = new OpenAi($key);
     }
 
@@ -22,8 +22,8 @@ final class OpenAIService implements ChatService
      */
     public function getCompletion(array $input): array
     {
-        $instructions = config('openai.instructions');
-        $model = config('openai.model');
+        $instructions = config('statamic-chatgpt-integration.instructions');
+        $model = config('statamic-chatgpt-integration.model');
 
         $complete = $this->client->chat([
             'model' => $model,

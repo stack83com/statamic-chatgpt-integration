@@ -3,6 +3,12 @@
         <div>
             <button v-on:click="toggleChat()" class="btn btn-default">Open chat</button>
         </div>
+        <transition>
+            <snackbar v-if="snackbar.show" class="toast"
+                      :message="snackbar.message"
+                      :success="snackbar.success"
+            />
+        </transition>
         <div v-if="chat.active" class="modal-bg">
             <div class="modal">
                 <div class="modal-header flex justify-between">
@@ -46,10 +52,12 @@
 <script>
 const axios = require('axios');
 import ChatMessage from '../ChatMessage.vue';
+import Snackbar from "../Snackbar.vue";
 
 export default {
     mixins: [Fieldtype],
     components: {
+        Snackbar,
         'chat-message': ChatMessage
     },
     data() {
@@ -60,7 +68,12 @@ export default {
                 conversation: [],
                 sending: false,
             },
-            copied: null
+            copied: null,
+            snackbar: {
+                show: false,
+                message: null,
+                success: false,
+            }
         };
     },
     created() {
@@ -88,6 +101,10 @@ export default {
             axios.post('/cp/api/chat', {
                 in: this.chat.conversation
             }).then(res => {
+                if(res.data.message.error) {
+                    this.popSnack(res.data.message.error.message, false, 5000);
+                    return;
+                }
                 this.chat.sending = false;
                 this.chat.conversation.push(
                     {
@@ -114,12 +131,36 @@ export default {
         },
         copyMessage(key) {
             navigator.clipboard.writeText(this.chat.conversation[key].content);
+            this.popSnack("Text copied!");
+        },
+        popSnack(message, success = true, time = 2000) {
+            this.snackbar.message = message
+            this.snackbar.show = true;
+            this.snackbar.success = success;
+            setTimeout(()=> this.snackbar.show = false, time);
         }
     }
 };
 </script>
 
 <style scoped>
+.v-enter-active,
+.v-leave-active {
+    transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+    opacity: 0;
+}
+.toast {
+    position:fixed;
+    z-index: 999999;
+    bottom:20px;
+    width:400px;
+    left:calc(50vw - 200px);
+}
+
 .modal {
     position: relative;
     width: 96%;
