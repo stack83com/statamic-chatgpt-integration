@@ -30,7 +30,7 @@ composer require stack83com/statamic-chatgpt-integration
 
 Here's where you can explain how to use this wonderful addon.
 
-1. Go to [https://platform.openai.com/)](https://platform.openai.com/) > Login or Sign Up
+1. Go to [https://platform.openai.com/](https://platform.openai.com/) > Login or Sign Up
 2. Go to View API Keys > Create new secret key
 3. Extend the .env file and add `OPENAI_API_KEY` and set the secret key
 4. Spin up your Statamic and go to the CP and login

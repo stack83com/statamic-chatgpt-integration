@@ -11,6 +11,6 @@ class OpenChat extends Fieldtype
      */
     public static function title()
     {
-        return 'Start ChatGPT';
+        return 'ChatGPT';
     }
 }
