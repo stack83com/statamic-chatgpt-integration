@@ -1,25 +1,43 @@
 {
     "name": "stack83com/statamic-chatgpt-integration",
+    "description": "Where ChatGPT meets Statamic",
+    "homepage": "https://github.com/stack83com/statamic-chatgpt-integration",
+    "version": "1.0.0",
+    "type": "statamic-addon",
+    "keywords": [
+        "Statamic",
+        "ChatGPT"
+    ],
+    "license": "MIT",
     "autoload": {
         "psr-4": {
             "Stack83\\StatamicChatGPT\\": "src"
         }
     },
+    "authors": [
+        {
+            "name": "Dirk Menkveld",
+            "email": "dirk@stack83.com",
+            "homepage": "https://www.stack83.com/",
+            "role": "Developer"
+        }
+    ],
     "extra": {
-        "statamic": {
-            "name": "Statamic ChatGPT Integration",
-            "description": "Where ChatGPT meets Statamic"
-        },
         "laravel": {
             "providers": [
                 "Stack83\\StatamicChatGPT\\ServiceProvider"
             ]
+        },
+        "statamic": {
+            "name": "Statamic ChatGPT Integration",
+            "slug": "chatgpt-integration",
+            "description": "Where ChatGPT meets Statamic",
+            "version": "1.0.0"
         }
     },
     "require": {
         "orhanerday/open-ai": "^4.7"
-    }
-    ,
+    },
     "require-dev": {
         "roave/security-advisories": "dev-latest"
     }
