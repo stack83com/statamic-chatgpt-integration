@@ -166,7 +166,6 @@ var axios = __webpack_require__(/*! axios */ "../../../node_modules/axios/dist/b
         conversation: [],
         sending: false
       },
-      copied: null,
       snackbar: {
         show: false,
         message: null,
@@ -185,61 +184,66 @@ var axios = __webpack_require__(/*! axios */ "../../../node_modules/axios/dist/b
   },
   methods: {
     toggleChat: function toggleChat() {
+      var _this2 = this;
       this.chat.active = !this.chat.active;
-      this.scrollDown(true);
+      this.$nextTick(function () {
+        _this2.scrollDown();
+      });
     },
     sendChat: function sendChat() {
-      var _this2 = this;
+      var _this3 = this;
       this.chat.sending = true;
       this.chat.conversation.push({
         role: 'user',
         content: this.chat.input
       });
       setTimeout(function () {
-        return _this2.scrollDown(true);
+        return _this3.scrollDown();
       }, 50);
       this.chat.input = null;
       axios.post('/cp/api/chat', {
         "in": this.chat.conversation
       }).then(function (res) {
+        _this3.chat.sending = false;
         if (res.data.message.error) {
-          _this2.popSnack(res.data.message.error.message, false, 5000);
+          _this3.popSnack(res.data.message.error.message, false, 5000);
           return;
         }
-        _this2.chat.sending = false;
-        _this2.chat.conversation.push({
+        _this3.chat.conversation.push({
           role: 'assistant',
           content: res.data.message.choices[0].message.content
         });
         setTimeout(function () {
-          return _this2.scrollDown(true);
+          return _this3.scrollDown();
         }, 100);
+      })["catch"](function (error) {
+        _this3.chat.sending = false;
+        console.error(error);
+        _this3.popSnack('Something went wrong. Please try again later.', false);
       });
     },
-    scrollDown: function scrollDown(smooth) {
-      var el = document.getElementById('lastMessage');
+    scrollDown: function scrollDown() {
+      var el = this.$refs.conversation;
       if (!el) {
         return;
       }
-      var options = {};
-      if (smooth) {
-        options.behavior = 'smooth';
-      }
-      el.scrollIntoView(options);
+      el.scrollIntoView({
+        behavior: 'smooth'
+      });
     },
     copyMessage: function copyMessage(key) {
       navigator.clipboard.writeText(this.chat.conversation[key].content);
       this.popSnack("Text copied!");
     },
     popSnack: function popSnack(message) {
-      var _this3 = this;
+      var _this4 = this;
       var success = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
       var time = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 2000;
       this.snackbar.message = message;
       this.snackbar.show = true;
       this.snackbar.success = success;
       setTimeout(function () {
-        return _this3.snackbar.show = false;
+        return _this4.snackbar.show = false;
       }, time);
     }
   }
@@ -312,7 +316,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.v-enter-active[data-v-2ab64392],\n.v-leave-active[data-v-2ab64392] {\n    transition: opacity 0.5s ease;\n}\n.v-enter-from[data-v-2ab64392],\n.v-leave-to[data-v-2ab64392] {\n    opacity: 0;\n}\n.toast[data-v-2ab64392] {\n    position:fixed;\n    z-index: 999999;\n    bottom:20px;\n    width:400px;\n    left:calc(50vw - 200px);\n}\n.modal[data-v-2ab64392] {\n    position: relative;\n    width: 96%;\n    max-width: 1000px;\n    margin: 100px auto 0 auto;\n    height: calc(100vh - 148px);\n    background-color: white;\n    border-radius: 12px;\n}\n.modal-content[data-v-2ab64392] {\n}\n.modal-bg[data-v-2ab64392] {\n    position: fixed;\n    top: 0;\n    left: 0;\n    background-color: rgba(0, 0, 0, 0.6);\n    height: 100vh;\n    width: 100vw;\n    z-index: 100;\n}\n.modal-footer[data-v-2ab64392] {\n    position: absolute;\n    bottom: 0;\n    background-color: rgba(0, 0, 0, 0.10);\n    width: 100%;\n    height: 70px;\n}\n.modal-header h4[data-v-2ab64392] {\n    font-size: large;\n}\n.modal-header[data-v-2ab64392] {\n    height: 46px;\n    padding: 16px 24px;\n}\n.conversation[data-v-2ab64392] {\n    height: calc(100vh - 270px);\n    overflow-y: auto;\n    padding: 8px 16px;\n}\n.chat-input[data-v-2ab64392] {\n    width: calc(100% - 32px);\n    margin: 16px 0 16px 16px;\n    border: 1px rgba(0, 0, 0, 0.10) solid;\n    border-radius: 4px;\n    padding-right: 96px;\n    padding-left: 16px;\n    height: 38px;\n    box-shadow: rgba(0, 0, 0, 0.35) 0 5px 15px;\n}\n.chat-button[data-v-2ab64392] {\n    width: 80px;\n    margin-left: -80px;\n    border-left: solid 1px #4FB4D7;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.v-enter-active[data-v-2ab64392],\n.v-leave-active[data-v-2ab64392] {\n    transition: opacity 0.5s ease;\n}\n.v-enter-from[data-v-2ab64392],\n.v-leave-to[data-v-2ab64392] {\n    opacity: 0;\n}\n.toast[data-v-2ab64392] {\n    position: fixed;\n    z-index: 999999;\n    bottom: 20px;\n    width: 400px;\n    left: calc(50vw - 200px);\n}\n.modal[data-v-2ab64392] {\n    position: relative;\n    width: 96%;\n    max-width: 1000px;\n    margin: 100px auto 0 auto;\n    height: calc(100vh - 148px);\n    background-color: white;\n    border-radius: 12px;\n}\n.modal-footer[data-v-2ab64392] {\n    position: absolute;\n    bottom: 0;\n    background-color: rgba(0, 0, 0, 0.10);\n    width: 100%;\n    height: 70px;\n}\n.modal-header h4[data-v-2ab64392] {\n    font-size: large;\n}\n.modal-header[data-v-2ab64392] {\n    height: 46px;\n    padding: 16px 24px;\n}\n.conversation[data-v-2ab64392] {\n    height: calc(100vh - 270px);\n    overflow-y: auto;\n    padding: 8px 16px;\n}\n.chat-input[data-v-2ab64392] {\n    width: calc(100% - 32px);\n    margin: 16px 0 16px 16px;\n    border: 1px rgba(0, 0, 0, 0.10) solid;\n    border-radius: 4px;\n    padding-right: 96px;\n    padding-left: 16px;\n    height: 38px;\n    box-shadow: rgba(0, 0, 0, 0.35) 0 5px 15px;\n}\n.chat-button[data-v-2ab64392] {\n    width: 80px;\n    margin-left: -80px;\n    border-left: solid 1px #4FB4D7;\n}\n.openai-container[data-v-2ab64392] {\n    position: relative;\n}\n\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -1164,18 +1168,12 @@ var render = function () {
   var _c = _vm._self._c || _h
   return _c(
     "div",
+    { staticClass: "openai-container" },
     [
       _c("div", [
         _c(
           "button",
-          {
-            staticClass: "btn btn-default",
-            on: {
-              click: function ($event) {
-                return _vm.toggleChat()
-              },
-            },
-          },
+          { staticClass: "btn btn-default", on: { click: _vm.toggleChat } },
           [_vm._v("Open chat")]
         ),
       ]),
@@ -1184,151 +1182,151 @@ var render = function () {
         "transition",
         [
           _vm.snackbar.show
-            ? _c("snackbar", {
-                staticClass: "toast",
-                attrs: {
-                  message: _vm.snackbar.message,
-                  success: _vm.snackbar.success,
-                },
-              })
+            ? _c(
+                "modal",
+                [
+                  _c("snackbar", {
+                    staticClass: "toast",
+                    attrs: {
+                      message: _vm.snackbar.message,
+                      success: _vm.snackbar.success,
+                    },
+                  }),
+                ],
+                1
+              )
             : _vm._e(),
         ],
         1
       ),
       _vm._v(" "),
       _vm.chat.active
-        ? _c("div", { staticClass: "modal-bg" }, [
-            _c("div", { staticClass: "modal" }, [
-              _c("div", { staticClass: "modal-header flex justify-between" }, [
-                _c("h4", [_vm._v("AI assistant")]),
-                _vm._v(" "),
-                _c(
-                  "i",
-                  {
-                    staticStyle: {
-                      cursor: "pointer",
-                      height: "24px",
-                      color: "#a10b00",
-                    },
-                    on: {
-                      click: function ($event) {
-                        return _vm.toggleChat()
+        ? _c("modal", { staticClass: "modal" }, [
+            _c("div", { staticClass: "modal-header flex justify-between" }, [
+              _c("h4", [_vm._v("AI Assistant Chat")]),
+              _vm._v(" "),
+              _c(
+                "i",
+                {
+                  staticStyle: {
+                    cursor: "pointer",
+                    height: "24px",
+                    color: "#a10b00",
+                  },
+                  attrs: { "aria-label": "Close chat" },
+                  on: { click: _vm.toggleChat },
+                },
+                [
+                  _c(
+                    "svg",
+                    {
+                      staticClass: "w-6 h-6",
+                      attrs: {
+                        xmlns: "http://www.w3.org/2000/svg",
+                        fill: "none",
+                        viewBox: "0 0 24 24",
+                        "stroke-width": "1.5",
+                        stroke: "currentColor",
                       },
                     },
-                  },
-                  [
-                    _c(
-                      "svg",
-                      {
-                        staticClass: "w-6 h-6",
+                    [
+                      _c("path", {
                         attrs: {
-                          xmlns: "http://www.w3.org/2000/svg",
-                          fill: "none",
-                          viewBox: "0 0 24 24",
-                          "stroke-width": "1.5",
-                          stroke: "currentColor",
+                          "stroke-linecap": "round",
+                          "stroke-linejoin": "round",
+                          d: "M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
                         },
-                      },
-                      [
-                        _c("path", {
-                          attrs: {
-                            "stroke-linecap": "round",
-                            "stroke-linejoin": "round",
-                            d: "M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
-                          },
-                        }),
-                      ]
-                    ),
-                  ]
-                ),
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "modal-content" }, [
-                _c(
-                  "div",
-                  { staticClass: "conversation" },
-                  _vm._l(_vm.chat.conversation, function (message, key) {
-                    return _c(
-                      "div",
-                      [
-                        _c(
-                          "keep-alive",
-                          [
-                            _c("chat-message", {
-                              key: key,
-                              attrs: {
-                                message: message,
-                                conversationLength:
-                                  _vm.chat.conversation.length,
+                      }),
+                    ]
+                  ),
+                ]
+              ),
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "modal-content" }, [
+              _c(
+                "div",
+                { ref: "conversation", staticClass: "conversation" },
+                [
+                  _c(
+                    "keep-alive",
+                    _vm._l(_vm.chat.conversation, function (message, key) {
+                      return _c(
+                        "div",
+                        [
+                          _c("chat-message", {
+                            key: key,
+                            attrs: {
+                              message: message,
+                              conversationLength: _vm.chat.conversation.length,
+                            },
+                            on: {
+                              copy: function ($event) {
+                                return _vm.copyMessage(key)
                               },
-                              on: {
-                                copy: function ($event) {
-                                  return _vm.copyMessage(key)
-                                },
-                              },
-                            }),
-                          ],
-                          1
-                        ),
-                      ],
-                      1
-                    )
-                  }),
-                  0
-                ),
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "modal-footer" }, [
-                _c(
-                  "form",
-                  {
-                    on: {
-                      submit: function ($event) {
-                        $event.preventDefault()
-                        return _vm.sendChat()
-                      },
+                            },
+                          }),
+                        ],
+                        1
+                      )
+                    }),
+                    0
+                  ),
+                ],
+                1
+              ),
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "modal-footer" }, [
+              _c(
+                "form",
+                {
+                  on: {
+                    submit: function ($event) {
+                      $event.preventDefault()
+                      return _vm.sendChat.apply(null, arguments)
                     },
                   },
-                  [
-                    _c("input", {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.chat.input,
-                          expression: "chat.input",
-                        },
-                      ],
-                      staticClass: "chat-input",
-                      attrs: { type: "text", disabled: _vm.chat.sending },
-                      domProps: { value: _vm.chat.input },
-                      on: {
-                        input: function ($event) {
-                          if ($event.target.composing) {
-                            return
-                          }
-                          _vm.$set(_vm.chat, "input", $event.target.value)
-                        },
-                      },
-                    }),
-                    _vm._v(" "),
-                    _c(
-                      "button",
+                },
+                [
+                  _c("input", {
+                    directives: [
                       {
-                        staticClass: "chat-button",
-                        attrs: { type: "submit", disabled: _vm.chat.sending },
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.chat.input,
+                        expression: "chat.input",
                       },
-                      [
-                        _vm._v(
-                          "\n                        " +
-                            _vm._s(_vm.chat.sending ? "Waiting" : "Submit") +
-                            "\n                    "
-                        ),
-                      ]
-                    ),
-                  ]
-                ),
-              ]),
+                    ],
+                    staticClass: "chat-input",
+                    attrs: { type: "text", disabled: _vm.chat.sending },
+                    domProps: { value: _vm.chat.input },
+                    on: {
+                      input: function ($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(_vm.chat, "input", $event.target.value)
+                      },
+                    },
+                  }),
+                  _vm._v(" "),
+                  _c(
+                    "button",
+                    {
+                      staticClass: "chat-button",
+                      attrs: { type: "submit", disabled: _vm.chat.sending },
+                    },
+                    [
+                      _vm._v(
+                        "\n                    " +
+                          _vm._s(_vm.chat.sending ? "Waiting" : "Submit") +
+                          "\n                "
+                      ),
+                    ]
+                  ),
+                ]
+              ),
             ]),
           ])
         : _vm._e(),

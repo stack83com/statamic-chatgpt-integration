@@ -33,6 +33,7 @@ Here's where you can explain how to use this wonderful addon.
 1. Go to [https://platform.openai.com/](https://platform.openai.com/) > Login or Sign Up
 2. Go to View API Keys > Create new secret key
 3. Extend the .env file and add `OPENAI_API_KEY` and set the secret key
-4. Spin up your Statamic and go to the CP and login
-5. Go to Blueprints and add the "Start ChatGPT" fieldset to the preferred section (don't forget to save)
-6. Now, you are ready to start ChatGPT while writing articles, have fun!
+4. Optionally, you can add `OPENAI_MODEL` and set the model (default: `gpt-3.5-turbo`). View a list of the available models [here]([https://platform.openai.com/docs/models])
+5. Spin up your Statamic and go to the CP and login
+6. Go to Blueprints and add the "Start ChatGPT" fieldset to the preferred section (don't forget to save)
+7. Now, you are ready to start ChatGPT while writing articles, have fun!

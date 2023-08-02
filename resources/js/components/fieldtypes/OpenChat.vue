@@ -1,53 +1,53 @@
 <template>
-    <div>
+    <div class="openai-container">
         <div>
-            <button v-on:click="toggleChat()" class="btn btn-default">Open chat</button>
+            <button v-on:click="toggleChat" class="btn btn-default">Open chat</button>
         </div>
         <transition>
-            <snackbar v-if="snackbar.show" class="toast"
-                      :message="snackbar.message"
-                      :success="snackbar.success"
-            />
+            <modal v-if="snackbar.show">
+                <snackbar class="toast"
+                          :message="snackbar.message"
+                          :success="snackbar.success"
+                />
+            </modal>
         </transition>
-        <div v-if="chat.active" class="modal-bg">
-            <div class="modal">
-                <div class="modal-header flex justify-between">
-                    <h4>AI assistant</h4>
-                    <i v-on:click="toggleChat()" style="cursor:pointer;height:24px;color:#a10b00">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                             stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                  d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                    </i>
-                </div>
-                <div class="modal-content">
-                    <div class="conversation">
-                        <div v-for="(message, key) in chat.conversation">
-                            <keep-alive>
-                                <chat-message
-                                    :message="message"
-                                    :key="key"
-                                    :conversationLength="chat.conversation.length"
-                                    v-on:copy="copyMessage(key)"
-                                />
-                            </keep-alive>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <form @submit.prevent="sendChat()">
-                        <input type="text" v-model="chat.input" class="chat-input" :disabled="chat.sending">
-                        <button type="submit" class="chat-button" :disabled="chat.sending">
-                            {{ chat.sending ? 'Waiting' : 'Submit' }}
-                        </button>
-                    </form>
-                </div>
-
+        <modal v-if="chat.active" class="modal">
+            <div class="modal-header flex justify-between">
+                <h4>AI Assistant</h4>
+                <i v-on:click="toggleChat" style="cursor:pointer;height:24px;color:#a10b00" aria-label="Close chat">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                         stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </i>
             </div>
-        </div>
+            <div class="modal-content">
+                <div class="conversation" ref="conversation">
+                    <keep-alive>
+                        <div v-for="(message, key) in chat.conversation">
+                            <chat-message
+                                :message="message"
+                                :key="key"
+                                :conversationLength="chat.conversation.length"
+                                v-on:copy="copyMessage(key)"
+                            />
+                        </div>
+                    </keep-alive>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <form @submit.prevent="sendChat">
+                    <input type="text" v-model="chat.input" class="chat-input" :disabled="chat.sending">
+                    <button type="submit" class="chat-button" :disabled="chat.sending">
+                        {{ chat.sending ? 'Waiting' : 'Submit' }}
+                    </button>
+                </form>
+            </div>
+        </modal>
     </div>
 </template>
+
 
 <script>
 const axios = require('axios');
@@ -68,7 +68,6 @@ export default {
                 conversation: [],
                 sending: false,
             },
-            copied: null,
             snackbar: {
                 show: false,
                 message: null,
@@ -85,7 +84,9 @@ export default {
     methods: {
         toggleChat() {
             this.chat.active = !this.chat.active;
-            this.scrollDown(true);
+            this.$nextTick(() => {
+                this.scrollDown();
+            });
         },
         sendChat() {
             this.chat.sending = true;
@@ -94,53 +95,56 @@ export default {
                 content: this.chat.input
             });
 
-            setTimeout(() => this.scrollDown(true), 50);
+            setTimeout(() => this.scrollDown(), 50);
 
             this.chat.input = null;
 
             axios.post('/cp/api/chat', {
                 in: this.chat.conversation
-            }).then(res => {
-                if(res.data.message.error) {
-                    this.popSnack(res.data.message.error.message, false, 5000);
-                    return;
-                }
-                this.chat.sending = false;
-                this.chat.conversation.push(
-                    {
+            })
+                .then(res => {
+                    this.chat.sending = false;
+
+                    if (res.data.message.error) {
+                        this.popSnack(res.data.message.error.message, false, 5000);
+                        return;
+                    }
+
+                    this.chat.conversation.push({
                         role: 'assistant',
                         content: res.data.message.choices[0].message.content
-                    }
-                );
+                    });
 
-                setTimeout(() => this.scrollDown(true), 100);
-            });
-        }, scrollDown(smooth) {
-            const el = document.getElementById('lastMessage');
+                    setTimeout(() => this.scrollDown(), 100);
+                })
+                .catch(error => {
+                    this.chat.sending = false;
+                    console.error(error);
+                    this.popSnack('Something went wrong. Please try again later.', false);
+                });
+        },
+        scrollDown() {
+            const el = this.$refs.conversation;
 
             if (!el) {
-                return
+                return;
             }
 
-            let options = {}
-            if (smooth) {
-                options.behavior = 'smooth';
-            }
-
-            el.scrollIntoView(options);
+            el.scrollIntoView({ behavior: 'smooth' });
         },
         copyMessage(key) {
             navigator.clipboard.writeText(this.chat.conversation[key].content);
             this.popSnack("Text copied!");
         },
         popSnack(message, success = true, time = 2000) {
-            this.snackbar.message = message
+            this.snackbar.message = message;
             this.snackbar.show = true;
             this.snackbar.success = success;
-            setTimeout(()=> this.snackbar.show = false, time);
+            setTimeout(() => this.snackbar.show = false, time);
         }
     }
 };
+
 </script>
 
 <style scoped>
@@ -154,11 +158,11 @@ export default {
     opacity: 0;
 }
 .toast {
-    position:fixed;
+    position: fixed;
     z-index: 999999;
-    bottom:20px;
-    width:400px;
-    left:calc(50vw - 200px);
+    bottom: 20px;
+    width: 400px;
+    left: calc(50vw - 200px);
 }
 
 .modal {
@@ -169,19 +173,6 @@ export default {
     height: calc(100vh - 148px);
     background-color: white;
     border-radius: 12px;
-}
-
-.modal-content {
-}
-
-.modal-bg {
-    position: fixed;
-    top: 0;
-    left: 0;
-    background-color: rgba(0, 0, 0, 0.6);
-    height: 100vh;
-    width: 100vw;
-    z-index: 100;
 }
 
 .modal-footer {
@@ -223,4 +214,9 @@ export default {
     margin-left: -80px;
     border-left: solid 1px #4FB4D7;
 }
+
+.openai-container {
+    position: relative;
+}
+
 </style>
