@@ -2,7 +2,7 @@
     "name": "stack83com/statamic-chatgpt-integration",
     "description": "Where ChatGPT meets Statamic",
     "homepage": "https://github.com/stack83com/statamic-chatgpt-integration",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "type": "statamic-addon",
     "keywords": [
         "Statamic",
@@ -32,7 +32,7 @@
             "name": "Statamic ChatGPT Integration",
             "slug": "chatgpt-integration",
             "description": "Where ChatGPT meets Statamic",
-            "version": "1.0.1"
+            "version": "1.0.2"
         }
     },
     "require": {
