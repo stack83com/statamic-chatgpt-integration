@@ -24,7 +24,6 @@
             </div>
             <div class="modal-content">
                 <div class="conversation" ref="conversation">
-                    <keep-alive>
                         <div v-for="(message, key) in chat.conversation">
                             <chat-message
                                 :message="message"
@@ -33,7 +32,6 @@
                                 v-on:copy="copyMessage(key)"
                             />
                         </div>
-                    </keep-alive>
                 </div>
             </div>
             <div class="modal-footer">
@@ -84,9 +82,7 @@ export default {
     methods: {
         toggleChat() {
             this.chat.active = !this.chat.active;
-            this.$nextTick(() => {
-                this.scrollDown();
-            });
+            this.scrollDown(true);
         },
         sendChat() {
             this.chat.sending = true;
@@ -95,7 +91,7 @@ export default {
                 content: this.chat.input
             });
 
-            setTimeout(() => this.scrollDown(), 50);
+            setTimeout(() => this.scrollDown(true), 50);
 
             this.chat.input = null;
 
@@ -115,7 +111,7 @@ export default {
                         content: res.data.message.choices[0].message.content
                     });
 
-                    setTimeout(() => this.scrollDown(), 100);
+                    setTimeout(() => this.scrollDown(true), 100);
                 })
                 .catch(error => {
                     this.chat.sending = false;
@@ -123,14 +119,19 @@ export default {
                     this.popSnack('Something went wrong. Please try again later.', false);
                 });
         },
-        scrollDown() {
-            const el = this.$refs.conversation;
+        scrollDown(smooth) {
+            const el = document.getElementById('lastMessage');
 
             if (!el) {
-                return;
+                return
             }
 
-            el.scrollIntoView({ behavior: 'smooth' });
+            let options = {}
+            if (smooth) {
+                options.behavior = 'smooth';
+            }
+
+            el.scrollIntoView(options);
         },
         copyMessage(key) {
             navigator.clipboard.writeText(this.chat.conversation[key].content);

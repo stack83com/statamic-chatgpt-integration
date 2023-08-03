@@ -146,8 +146,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 
 var axios = __webpack_require__(/*! axios */ "../../../node_modules/axios/dist/browser/axios.cjs");
 
@@ -184,66 +182,65 @@ var axios = __webpack_require__(/*! axios */ "../../../node_modules/axios/dist/b
   },
   methods: {
     toggleChat: function toggleChat() {
-      var _this2 = this;
       this.chat.active = !this.chat.active;
-      this.$nextTick(function () {
-        _this2.scrollDown();
-      });
+      this.scrollDown(true);
     },
     sendChat: function sendChat() {
-      var _this3 = this;
+      var _this2 = this;
       this.chat.sending = true;
       this.chat.conversation.push({
         role: 'user',
         content: this.chat.input
       });
       setTimeout(function () {
-        return _this3.scrollDown();
+        return _this2.scrollDown(true);
       }, 50);
       this.chat.input = null;
       axios.post('/cp/api/chat', {
         "in": this.chat.conversation
       }).then(function (res) {
-        _this3.chat.sending = false;
+        _this2.chat.sending = false;
         if (res.data.message.error) {
-          _this3.popSnack(res.data.message.error.message, false, 5000);
+          _this2.popSnack(res.data.message.error.message, false, 5000);
           return;
         }
-        _this3.chat.conversation.push({
+        _this2.chat.conversation.push({
           role: 'assistant',
           content: res.data.message.choices[0].message.content
         });
         setTimeout(function () {
-          return _this3.scrollDown();
+          return _this2.scrollDown(true);
         }, 100);
       })["catch"](function (error) {
-        _this3.chat.sending = false;
+        _this2.chat.sending = false;
         console.error(error);
-        _this3.popSnack('Something went wrong. Please try again later.', false);
+        _this2.popSnack('Something went wrong. Please try again later.', false);
       });
     },
-    scrollDown: function scrollDown() {
-      var el = this.$refs.conversation;
+    scrollDown: function scrollDown(smooth) {
+      var el = document.getElementById('lastMessage');
       if (!el) {
         return;
       }
-      el.scrollIntoView({
-        behavior: 'smooth'
-      });
+      var options = {};
+      if (smooth) {
+        options.behavior = 'smooth';
+      }
+      el.scrollIntoView(options);
     },
     copyMessage: function copyMessage(key) {
       navigator.clipboard.writeText(this.chat.conversation[key].content);
       this.popSnack("Text copied!");
     },
     popSnack: function popSnack(message) {
-      var _this4 = this;
+      var _this3 = this;
       var success = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
       var time = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 2000;
       this.snackbar.message = message;
       this.snackbar.show = true;
       this.snackbar.success = success;
       setTimeout(function () {
-        return _this4.snackbar.show = false;
+        return _this3.snackbar.show = false;
       }, time);
     }
   }
@@ -1203,7 +1200,7 @@ var render = function () {
       _vm.chat.active
         ? _c("modal", { staticClass: "modal" }, [
             _c("div", { staticClass: "modal-header flex justify-between" }, [
-              _c("h4", [_vm._v("AI Assistant Chat")]),
+              _c("h4", [_vm._v("AI Assistant")]),
               _vm._v(" "),
               _c(
                 "i",
@@ -1247,33 +1244,27 @@ var render = function () {
               _c(
                 "div",
                 { ref: "conversation", staticClass: "conversation" },
-                [
-                  _c(
-                    "keep-alive",
-                    _vm._l(_vm.chat.conversation, function (message, key) {
-                      return _c(
-                        "div",
-                        [
-                          _c("chat-message", {
-                            key: key,
-                            attrs: {
-                              message: message,
-                              conversationLength: _vm.chat.conversation.length,
-                            },
-                            on: {
-                              copy: function ($event) {
-                                return _vm.copyMessage(key)
-                              },
-                            },
-                          }),
-                        ],
-                        1
-                      )
-                    }),
-                    0
-                  ),
-                ],
-                1
+                _vm._l(_vm.chat.conversation, function (message, key) {
+                  return _c(
+                    "div",
+                    [
+                      _c("chat-message", {
+                        key: key,
+                        attrs: {
+                          message: message,
+                          conversationLength: _vm.chat.conversation.length,
+                        },
+                        on: {
+                          copy: function ($event) {
+                            return _vm.copyMessage(key)
+                          },
+                        },
+                      }),
+                    ],
+                    1
+                  )
+                }),
+                0
               ),
             ]),
             _vm._v(" "),
