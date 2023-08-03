@@ -21,8 +21,20 @@ class ServiceProvider extends AddonServiceProvider
         'cp' => __DIR__.'/../routes/cp.php',
     ];
 
-    public function bootAddon()
+    public function bootAddon(): void
     {
         $this->app->bind(ChatService::class, OpenAIService::class);
+    }
+
+    public function boot(): void
+    {
+        parent::boot();
+
+        //merge config
+        $this->mergeConfigFrom(__DIR__.'/../config/statamic-chatgpt-integration.php', 'statamic-chatgpt-integration');
+
+        $this->publishes([
+            __DIR__.'/../config/statamic-chatgpt-integration.php' => config_path('statamic-chatgpt-integration.php'),
+        ], 'statamic-chatgpt-integration-config');
     }
 }

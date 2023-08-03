@@ -24,7 +24,7 @@
             </div>
             <div class="modal-content">
                 <div class="conversation" ref="conversation">
-                        <div v-for="(message, key) in chat.conversation">
+                        <div v-for="(message, key) in chat.conversation" :ref="'message' + key">
                             <chat-message
                                 :message="message"
                                 :key="key"
@@ -82,7 +82,9 @@ export default {
     methods: {
         toggleChat() {
             this.chat.active = !this.chat.active;
-            this.scrollDown(true);
+            if (this.chat.active) {
+                setTimeout(() => this.scrollDown(true), 100);
+            }
         },
         sendChat() {
             this.chat.sending = true;
@@ -120,19 +122,19 @@ export default {
                 });
         },
         scrollDown(smooth) {
-            const el = document.getElementById('lastMessage');
+            const lastMessageIndex = this.chat.conversation.length - 1;
+            const lastMessageRef = this.$refs['message' + lastMessageIndex];
 
-            if (!el) {
-                return
-            }
+            if (!lastMessageRef || !lastMessageRef[0]) return;
 
-            let options = {}
+            let options = {};
             if (smooth) {
                 options.behavior = 'smooth';
             }
 
-            el.scrollIntoView(options);
-        },
+            lastMessageRef[0].scrollIntoView(options);
+        }
+        ,
         copyMessage(key) {
             navigator.clipboard.writeText(this.chat.conversation[key].content);
             this.popSnack("Text copied!");
@@ -174,6 +176,10 @@ export default {
     height: calc(100vh - 148px);
     background-color: white;
     border-radius: 12px;
+}
+
+.modal-content {
+    height: calc(100vh - 200px);
 }
 
 .modal-footer {

@@ -182,65 +182,69 @@ var axios = __webpack_require__(/*! axios */ "../../../node_modules/axios/dist/b
   },
   methods: {
     toggleChat: function toggleChat() {
+      var _this2 = this;
       this.chat.active = !this.chat.active;
-      this.scrollDown(true);
+      if (this.chat.active) {
+        setTimeout(function () {
+          return _this2.scrollDown(true);
+        }, 100);
+      }
     },
     sendChat: function sendChat() {
-      var _this2 = this;
+      var _this3 = this;
       this.chat.sending = true;
       this.chat.conversation.push({
         role: 'user',
         content: this.chat.input
       });
       setTimeout(function () {
-        return _this2.scrollDown(true);
+        return _this3.scrollDown(true);
       }, 50);
       this.chat.input = null;
       axios.post('/cp/api/chat', {
         "in": this.chat.conversation
       }).then(function (res) {
-        _this2.chat.sending = false;
+        _this3.chat.sending = false;
         if (res.data.message.error) {
-          _this2.popSnack(res.data.message.error.message, false, 5000);
+          _this3.popSnack(res.data.message.error.message, false, 5000);
           return;
         }
-        _this2.chat.conversation.push({
+        _this3.chat.conversation.push({
           role: 'assistant',
           content: res.data.message.choices[0].message.content
         });
         setTimeout(function () {
-          return _this2.scrollDown(true);
+          return _this3.scrollDown(true);
         }, 100);
       })["catch"](function (error) {
-        _this2.chat.sending = false;
+        _this3.chat.sending = false;
         console.error(error);
-        _this2.popSnack('Something went wrong. Please try again later.', false);
+        _this3.popSnack('Something went wrong. Please try again later.', false);
       });
     },
     scrollDown: function scrollDown(smooth) {
-      var el = document.getElementById('lastMessage');
-      if (!el) {
-        return;
-      }
+      var lastMessageIndex = this.chat.conversation.length - 1;
+      var lastMessageRef = this.$refs['message' + lastMessageIndex];
+      if (!lastMessageRef || !lastMessageRef[0]) return;
       var options = {};
       if (smooth) {
         options.behavior = 'smooth';
       }
-      el.scrollIntoView(options);
+      lastMessageRef[0].scrollIntoView(options);
     },
     copyMessage: function copyMessage(key) {
       navigator.clipboard.writeText(this.chat.conversation[key].content);
       this.popSnack("Text copied!");
     },
     popSnack: function popSnack(message) {
-      var _this3 = this;
+      var _this4 = this;
       var success = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
       var time = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 2000;
       this.snackbar.message = message;
       this.snackbar.show = true;
       this.snackbar.success = success;
       setTimeout(function () {
-        return _this3.snackbar.show = false;
+        return _this4.snackbar.show = false;
       }, time);
     }
   }
@@ -313,7 +317,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.v-enter-active[data-v-2ab64392],\n.v-leave-active[data-v-2ab64392] {\n    transition: opacity 0.5s ease;\n}\n.v-enter-from[data-v-2ab64392],\n.v-leave-to[data-v-2ab64392] {\n    opacity: 0;\n}\n.toast[data-v-2ab64392] {\n    position: fixed;\n    z-index: 999999;\n    bottom: 20px;\n    width: 400px;\n    left: calc(50vw - 200px);\n}\n.modal[data-v-2ab64392] {\n    position: relative;\n    width: 96%;\n    max-width: 1000px;\n    margin: 100px auto 0 auto;\n    height: calc(100vh - 148px);\n    background-color: white;\n    border-radius: 12px;\n}\n.modal-footer[data-v-2ab64392] {\n    position: absolute;\n    bottom: 0;\n    background-color: rgba(0, 0, 0, 0.10);\n    width: 100%;\n    height: 70px;\n}\n.modal-header h4[data-v-2ab64392] {\n    font-size: large;\n}\n.modal-header[data-v-2ab64392] {\n    height: 46px;\n    padding: 16px 24px;\n}\n.conversation[data-v-2ab64392] {\n    height: calc(100vh - 270px);\n    overflow-y: auto;\n    padding: 8px 16px;\n}\n.chat-input[data-v-2ab64392] {\n    width: calc(100% - 32px);\n    margin: 16px 0 16px 16px;\n    border: 1px rgba(0, 0, 0, 0.10) solid;\n    border-radius: 4px;\n    padding-right: 96px;\n    padding-left: 16px;\n    height: 38px;\n    box-shadow: rgba(0, 0, 0, 0.35) 0 5px 15px;\n}\n.chat-button[data-v-2ab64392] {\n    width: 80px;\n    margin-left: -80px;\n    border-left: solid 1px #4FB4D7;\n}\n.openai-container[data-v-2ab64392] {\n    position: relative;\n}\n\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.v-enter-active[data-v-2ab64392],\n.v-leave-active[data-v-2ab64392] {\n    transition: opacity 0.5s ease;\n}\n.v-enter-from[data-v-2ab64392],\n.v-leave-to[data-v-2ab64392] {\n    opacity: 0;\n}\n.toast[data-v-2ab64392] {\n    position: fixed;\n    z-index: 999999;\n    bottom: 20px;\n    width: 400px;\n    left: calc(50vw - 200px);\n}\n.modal[data-v-2ab64392] {\n    position: relative;\n    width: 96%;\n    max-width: 1000px;\n    margin: 100px auto 0 auto;\n    height: calc(100vh - 148px);\n    background-color: white;\n    border-radius: 12px;\n}\n.modal-content[data-v-2ab64392] {\n    height: calc(100vh - 200px);\n}\n.modal-footer[data-v-2ab64392] {\n    position: absolute;\n    bottom: 0;\n    background-color: rgba(0, 0, 0, 0.10);\n    width: 100%;\n    height: 70px;\n}\n.modal-header h4[data-v-2ab64392] {\n    font-size: large;\n}\n.modal-header[data-v-2ab64392] {\n    height: 46px;\n    padding: 16px 24px;\n}\n.conversation[data-v-2ab64392] {\n    height: calc(100vh - 270px);\n    overflow-y: auto;\n    padding: 8px 16px;\n}\n.chat-input[data-v-2ab64392] {\n    width: calc(100% - 32px);\n    margin: 16px 0 16px 16px;\n    border: 1px rgba(0, 0, 0, 0.10) solid;\n    border-radius: 4px;\n    padding-right: 96px;\n    padding-left: 16px;\n    height: 38px;\n    box-shadow: rgba(0, 0, 0, 0.35) 0 5px 15px;\n}\n.chat-button[data-v-2ab64392] {\n    width: 80px;\n    margin-left: -80px;\n    border-left: solid 1px #4FB4D7;\n}\n.openai-container[data-v-2ab64392] {\n    position: relative;\n}\n\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -1247,6 +1251,7 @@ var render = function () {
                 _vm._l(_vm.chat.conversation, function (message, key) {
                   return _c(
                     "div",
+                    { ref: "message" + key, refInFor: true },
                     [
                       _c("chat-message", {
                         key: key,
