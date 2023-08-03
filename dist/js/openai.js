@@ -146,8 +146,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 
 var axios = __webpack_require__(/*! axios */ "../../../node_modules/axios/dist/browser/axios.cjs");
 
@@ -186,9 +184,11 @@ var axios = __webpack_require__(/*! axios */ "../../../node_modules/axios/dist/b
     toggleChat: function toggleChat() {
       var _this2 = this;
       this.chat.active = !this.chat.active;
-      this.$nextTick(function () {
-        _this2.scrollDown();
-      });
+      if (this.chat.active) {
+        setTimeout(function () {
+          return _this2.scrollDown(true);
+        }, 100);
+      }
     },
     sendChat: function sendChat() {
       var _this3 = this;
@@ -198,7 +198,7 @@ var axios = __webpack_require__(/*! axios */ "../../../node_modules/axios/dist/b
         content: this.chat.input
       });
       setTimeout(function () {
-        return _this3.scrollDown();
+        return _this3.scrollDown(true);
       }, 50);
       this.chat.input = null;
       axios.post('/cp/api/chat', {
@@ -214,7 +214,7 @@ var axios = __webpack_require__(/*! axios */ "../../../node_modules/axios/dist/b
           content: res.data.message.choices[0].message.content
         });
         setTimeout(function () {
-          return _this3.scrollDown();
+          return _this3.scrollDown(true);
         }, 100);
       })["catch"](function (error) {
         _this3.chat.sending = false;
@@ -222,14 +222,15 @@ var axios = __webpack_require__(/*! axios */ "../../../node_modules/axios/dist/b
         _this3.popSnack('Something went wrong. Please try again later.', false);
       });
     },
-    scrollDown: function scrollDown() {
-      var el = this.$refs.conversation;
-      if (!el) {
-        return;
+    scrollDown: function scrollDown(smooth) {
+      var lastMessageIndex = this.chat.conversation.length - 1;
+      var lastMessageRef = this.$refs['message' + lastMessageIndex];
+      if (!lastMessageRef || !lastMessageRef[0]) return;
+      var options = {};
+      if (smooth) {
+        options.behavior = 'smooth';
       }
-      el.scrollIntoView({
-        behavior: 'smooth'
-      });
+      lastMessageRef[0].scrollIntoView(options);
     },
     copyMessage: function copyMessage(key) {
       navigator.clipboard.writeText(this.chat.conversation[key].content);
@@ -316,7 +317,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.v-enter-active[data-v-2ab64392],\n.v-leave-active[data-v-2ab64392] {\n    transition: opacity 0.5s ease;\n}\n.v-enter-from[data-v-2ab64392],\n.v-leave-to[data-v-2ab64392] {\n    opacity: 0;\n}\n.toast[data-v-2ab64392] {\n    position: fixed;\n    z-index: 999999;\n    bottom: 20px;\n    width: 400px;\n    left: calc(50vw - 200px);\n}\n.modal[data-v-2ab64392] {\n    position: relative;\n    width: 96%;\n    max-width: 1000px;\n    margin: 100px auto 0 auto;\n    height: calc(100vh - 148px);\n    background-color: white;\n    border-radius: 12px;\n}\n.modal-footer[data-v-2ab64392] {\n    position: absolute;\n    bottom: 0;\n    background-color: rgba(0, 0, 0, 0.10);\n    width: 100%;\n    height: 70px;\n}\n.modal-header h4[data-v-2ab64392] {\n    font-size: large;\n}\n.modal-header[data-v-2ab64392] {\n    height: 46px;\n    padding: 16px 24px;\n}\n.conversation[data-v-2ab64392] {\n    height: calc(100vh - 270px);\n    overflow-y: auto;\n    padding: 8px 16px;\n}\n.chat-input[data-v-2ab64392] {\n    width: calc(100% - 32px);\n    margin: 16px 0 16px 16px;\n    border: 1px rgba(0, 0, 0, 0.10) solid;\n    border-radius: 4px;\n    padding-right: 96px;\n    padding-left: 16px;\n    height: 38px;\n    box-shadow: rgba(0, 0, 0, 0.35) 0 5px 15px;\n}\n.chat-button[data-v-2ab64392] {\n    width: 80px;\n    margin-left: -80px;\n    border-left: solid 1px #4FB4D7;\n}\n.openai-container[data-v-2ab64392] {\n    position: relative;\n}\n\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.v-enter-active[data-v-2ab64392],\n.v-leave-active[data-v-2ab64392] {\n    transition: opacity 0.5s ease;\n}\n.v-enter-from[data-v-2ab64392],\n.v-leave-to[data-v-2ab64392] {\n    opacity: 0;\n}\n.toast[data-v-2ab64392] {\n    position: fixed;\n    z-index: 999999;\n    bottom: 20px;\n    width: 400px;\n    left: calc(50vw - 200px);\n}\n.modal[data-v-2ab64392] {\n    position: relative;\n    width: 96%;\n    max-width: 1000px;\n    margin: 100px auto 0 auto;\n    height: calc(100vh - 148px);\n    background-color: white;\n    border-radius: 12px;\n}\n.modal-content[data-v-2ab64392] {\n    height: calc(100vh - 200px);\n}\n.modal-footer[data-v-2ab64392] {\n    position: absolute;\n    bottom: 0;\n    background-color: rgba(0, 0, 0, 0.10);\n    width: 100%;\n    height: 70px;\n}\n.modal-header h4[data-v-2ab64392] {\n    font-size: large;\n}\n.modal-header[data-v-2ab64392] {\n    height: 46px;\n    padding: 16px 24px;\n}\n.conversation[data-v-2ab64392] {\n    height: calc(100vh - 270px);\n    overflow-y: auto;\n    padding: 8px 16px;\n}\n.chat-input[data-v-2ab64392] {\n    width: calc(100% - 32px);\n    margin: 16px 0 16px 16px;\n    border: 1px rgba(0, 0, 0, 0.10) solid;\n    border-radius: 4px;\n    padding-right: 96px;\n    padding-left: 16px;\n    height: 38px;\n    box-shadow: rgba(0, 0, 0, 0.35) 0 5px 15px;\n}\n.chat-button[data-v-2ab64392] {\n    width: 80px;\n    margin-left: -80px;\n    border-left: solid 1px #4FB4D7;\n}\n.openai-container[data-v-2ab64392] {\n    position: relative;\n}\n\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -1203,7 +1204,7 @@ var render = function () {
       _vm.chat.active
         ? _c("modal", { staticClass: "modal" }, [
             _c("div", { staticClass: "modal-header flex justify-between" }, [
-              _c("h4", [_vm._v("AI Assistant Chat")]),
+              _c("h4", [_vm._v("AI Assistant")]),
               _vm._v(" "),
               _c(
                 "i",
@@ -1247,33 +1248,28 @@ var render = function () {
               _c(
                 "div",
                 { ref: "conversation", staticClass: "conversation" },
-                [
-                  _c(
-                    "keep-alive",
-                    _vm._l(_vm.chat.conversation, function (message, key) {
-                      return _c(
-                        "div",
-                        [
-                          _c("chat-message", {
-                            key: key,
-                            attrs: {
-                              message: message,
-                              conversationLength: _vm.chat.conversation.length,
-                            },
-                            on: {
-                              copy: function ($event) {
-                                return _vm.copyMessage(key)
-                              },
-                            },
-                          }),
-                        ],
-                        1
-                      )
-                    }),
-                    0
-                  ),
-                ],
-                1
+                _vm._l(_vm.chat.conversation, function (message, key) {
+                  return _c(
+                    "div",
+                    { ref: "message" + key, refInFor: true },
+                    [
+                      _c("chat-message", {
+                        key: key,
+                        attrs: {
+                          message: message,
+                          conversationLength: _vm.chat.conversation.length,
+                        },
+                        on: {
+                          copy: function ($event) {
+                            return _vm.copyMessage(key)
+                          },
+                        },
+                      }),
+                    ],
+                    1
+                  )
+                }),
+                0
               ),
             ]),
             _vm._v(" "),
